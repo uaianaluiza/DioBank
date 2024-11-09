@@ -3,7 +3,6 @@ public class Conta {
     private Integer agencia;
     private Integer numero;
     private Double saldo;
-    private TipoConta tipo;
     private Cliente cliente;
 
     public Conta(Integer agencia, Integer numero) {
@@ -14,9 +13,11 @@ public class Conta {
     public Conta(ContaRequest request) {
         this.agencia = request.agencia;
         this.numero = request.numero;
-        this.tipo = request.tipoConta;
         this.saldo = request.saldo;
         this.cliente = request.cliente;
+    }
+
+    protected Conta() {
     }
 
     public Integer getAgencia() {
@@ -49,14 +50,6 @@ public class Conta {
 
     public void setSaldo(Double saldo) {
         this.saldo = saldo;
-    }
-
-    public TipoConta getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(TipoConta tipo) {
-        this.tipo = tipo;
     }
 
     public Double depositar(Double valor) {
