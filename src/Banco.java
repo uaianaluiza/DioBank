@@ -30,6 +30,13 @@ public class Banco {
     }
 
     public void cadastrarConta(ContaRequest request) {
-        getContas().add(new Conta(request));
+        int tipodeConta = request.tipoConta;
+
+        switch (tipodeConta) {
+            case 1 -> getContas().add(new ContaCorrente(request));
+            case 2 -> getContas().add(new ContaPoupanca(request));
+            default -> System.out.println("Opção inválida, selecione 1 para Conta Corrente ou dois para Conta Poupança");
+        }
     }
+
 }
