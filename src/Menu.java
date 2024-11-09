@@ -3,6 +3,16 @@ import java.util.Scanner;
 public class Menu {
 
     Scanner scanner = new Scanner(System.in);
+    ContaCorrente contaCorrente = new ContaCorrente();
+    ContaPoupanca contaPoupanca = new ContaPoupanca();
+
+    public Conta informeOsDadosDaConta() {
+        System.out.println("Informe o número da agencia");
+        int agencia = scanner.nextInt();
+        System.out.println("Informe o número da conta");
+        int numero = scanner.nextInt();
+        return new Conta(agencia, numero);
+    }
 
     public void acessarMenu() {
 
@@ -20,18 +30,17 @@ public class Menu {
         } else {
             throw new RuntimeException("Opção inválida");
         }
-
     }
 
     private void menuCliente() {
 
-        System.out.println("Informe os dados da Conta");
-        Conta conta = new Conta(scanner.nextInt(), scanner.nextInt());
+        Conta conta = informeOsDadosDaConta();
 
         System.out.println(" 1 -> Saque");
         System.out.println(" 2 -> Depósito");
         System.out.println(" 3 -> Transferencia");
         System.out.println(" 4 -> Consultar Saldo");
+        System.out.println(" 5 -> Consultar Dados da conta");
 
         int escolha = scanner.nextInt();
 
@@ -53,7 +62,7 @@ public class Menu {
             }
             case 3 -> {
                 System.out.println("Informe os dados da conta destino (Número da conta e agência):");
-                Conta contaDestino = new Conta(scanner.nextInt(), scanner.nextInt());
+                Conta contaDestino = informeOsDadosDaConta();
                 System.out.println("Informe o valor da transferência:");
                 double valor = scanner.nextDouble();
                 conta.transferir(valor, contaDestino);
@@ -64,6 +73,18 @@ public class Menu {
                 System.out.println("Saldo atual: " + conta.consultarSaldo());
                 menuCliente();
             }
+            case 5 -> {
+                System.out.println("Informe o tipo de conta: 1-Conta Corrente ou 2-Conta Poupança");
+                int tipoConta = scanner.nextInt();
+                System.out.println("Informe o cpf do cliente");
+                String cpf = scanner.next();
+                if (tipoConta == 1) {
+                    contaCorrente.dadosContaCorrente(cpf);
+                } else if (tipoConta == 2) {
+                    contaPoupanca.dadosContaPoupanca(cpf);
+                } else System.out.println("Tipo de conta inválido");
+            }
+
             default -> {
                 System.out.println("Opção inválida.");
                 menuCliente();
@@ -83,6 +104,7 @@ public class Menu {
         System.out.println(" 6 -> Consultar Saldo");
         System.out.println(" 7 -> Listar Contas");
         System.out.println(" 8 -> Listar Clientes");
+        System.out.println(" 9 -> Consultar Dados da conta");
 
         int escolhaFuncionario = scanner.nextInt();
 
@@ -102,20 +124,24 @@ public class Menu {
                 String cpf = scanner.next();
                 Cliente cliente = banco.buscarCliente(cpf);
                 if (cliente != null) {
-                    System.out.println("Informe o número da conta, agência e saldo inicial:");
-                    ContaRequest request = new ContaRequest(scanner.nextInt(), scanner.nextInt(), scanner.nextDouble(), TipoConta.valueOf(scanner.next()), cliente);
+                    System.out.println("Informe o número da agencia");
+                    int agencia = scanner.nextInt();
+                    System.out.println("Informe o número da conta");
+                    int numero = scanner.nextInt();
+                    System.out.println("Informe o tipo de conta:  1-Conta Corrente ou 2-Conta Poupança");
+                    int tipoConta = scanner.nextInt();
+                    ContaRequest request = new ContaRequest(agencia, numero, cliente, tipoConta);
                     banco.cadastrarConta(request);
                     System.out.println("Conta cadastrada com sucesso.");
                     menuFuncionario();
                 } else {
-                    System.out.println("Cliente não encontrado.");
+                    System.out.println("Cliente não encontrado. Retorne ao menu e cadastre o cliente");
                     menuFuncionario();
                 }
             }
 
             case 3 -> {
-                System.out.println("Informe os dados da Conta (Número da conta e agência):");
-                Conta conta = new Conta(scanner.nextInt(), scanner.nextInt());
+                Conta conta = informeOsDadosDaConta();
                 System.out.println("Informe o valor do saque:");
                 double valor = scanner.nextDouble();
                 conta.sacar(valor);
@@ -124,8 +150,7 @@ public class Menu {
             }
 
             case 4 -> {
-                System.out.println("Informe os dados da Conta (Número da conta e agência):");
-                Conta conta = new Conta(scanner.nextInt(), scanner.nextInt());
+                Conta conta = informeOsDadosDaConta();
                 System.out.println("Informe o valor do depósito:");
                 double valor = scanner.nextDouble();
                 conta.depositar(valor);
@@ -133,10 +158,10 @@ public class Menu {
                 menuFuncionario();
             }
             case 5 -> {
-                System.out.println("Informe os dados da Conta (Número da conta e agência):");
-                Conta conta = new Conta(scanner.nextInt(), scanner.nextInt());
-                System.out.println("Informe os dados da conta destino (Número da conta e agência):");
-                Conta contaDestino = new Conta(scanner.nextInt(), scanner.nextInt());
+                Conta conta = informeOsDadosDaConta();
+                System.out.println("Informe os dados da conta destino:");
+                Conta contaDestino = informeOsDadosDaConta();
+
                 System.out.println("Informe o valor da transferência:");
                 double valor = scanner.nextDouble();
                 conta.transferir(valor, contaDestino);
@@ -144,8 +169,7 @@ public class Menu {
                 menuFuncionario();
             }
             case 6 -> {
-                System.out.println("Informe os dados da Conta (Número da conta e agência):");
-                Conta conta = new Conta(scanner.nextInt(), scanner.nextInt());
+                Conta conta = informeOsDadosDaConta();
                 System.out.println("Saldo atual: " + conta.consultarSaldo());
                 menuFuncionario();
             }
@@ -158,6 +182,17 @@ public class Menu {
                 System.out.println("Listando todos os clientes:");
                 banco.getClientes().forEach(System.out::println);
                 menuFuncionario();
+            }
+            case 9 -> {
+                System.out.println("Informe o tipo de conta: 1-Conta Corrente ou 2-Conta Poupança");
+                int tipoConta = scanner.nextInt();
+                System.out.println("Informe o cpf do cliente");
+                String cpf = scanner.next();
+                if (tipoConta == 1) {
+                    contaCorrente.dadosContaCorrente(cpf);
+                } else if (tipoConta == 2) {
+                    contaPoupanca.dadosContaPoupanca(cpf);
+                } else System.out.println("Tipo de conta inválido");
             }
             default -> {
                 System.out.println("Opção inválida");
